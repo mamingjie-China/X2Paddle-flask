@@ -1,3 +1,4 @@
+#coding=utf-8
 from flask import (Flask, request, render_template, send_from_directory,
                    jsonify, session)
 from werkzeug.utils import secure_filename
@@ -216,6 +217,7 @@ def convert():
         cmd = 'x2paddle' + ' --framework=caffe' + ' --prototxt=' + model_path + ' --weight=' + weight_path + ' --save_dir=' + save_dir
 
         return x2paddle(cmd, model_name, save_base_dir)
+
 
 @app.route('/download/<path:filename>', methods=['GET', 'POST'])
 def download(filename):
