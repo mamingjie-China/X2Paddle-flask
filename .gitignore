@@ -1,0 +1,5 @@
+x2paddle.log
+./save_model
+./upload
+*.json
+realtime_console.py

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="static/layui/css/layui.css" media="all">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+</head>
+<body>
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend>X2Paddle</legend>
+</fieldset>
+<div class="layui-row layui-col-space10">
+
+  <div class="layui-col-md4">
+    <form class="layui-form"  action="">
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">邮箱</label>
+    <div class="layui-input-block">
+      <input type="text" name="email" required  lay-verify="email" placeholder="请输入邮箱地址" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+
+    <div class="layui-form-item">
+    <label class="layui-form-label">模型类型</label>
+    <div class="layui-input-block">
+      <select name="model_class" lay-verify="required" lay-filter="filter">
+        <option value=""></option>
+        <option value="image_detection">图像检测</option>
+        <option value="image_seg">图像分割</option>
+        <option value="image_classification">图像分类</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="layui-form-item">
+    <label class="layui-form-label">转换格式</label>
+    <div class="layui-input-block">
+      <select name="framework" lay-verify="required" lay-filter="filter">
+        <option value=""></option>
+        <option value="0">TensorFlow</option>
+        <option value="1">ONNX</option>
+        <option value="2">Caffe</option>
+      </select>
+    </div>
+  </div>
+        <div class="layui-form-item "  id="onnx" style="display: none;">
+            <label class="layui-form-label">文件上传</label>
+        <div class="layui-input-block">
+          <button type="button" class="layui-btn layui-btn-normal" id="onnx_file">上传.onnx文件</button>
+        </div>
+            </div>
+        <div class="layui-form-item "  id="tensorflow" style="display: none;">
+            <label class="layui-form-label">文件上传</label>
+        <div class="layui-input-block">
+          <button type="button" class="layui-btn layui-btn-normal" id="tf_file">上传.pb文件</button>
+        </div>
+            </div>
+        <div class="layui-form-item "  id="caffe" style="display: none;">
+            <label class="layui-form-label">文件上传</label>
+        <div class="layui-input-block">
+          <button type="button" class="layui-btn layui-btn-normal" id="caffe_model">上传.prototxt文件</button>
+            <button type="button" class="layui-btn layui-btn-normal" id="caffe_weight">上传.caffemodel文件</button>
+        </div>
+            </div>
+        <div class="layui-form-item " id="result_upload" style="display: none;">
+        <div class="layui-input-block">
+         <p >文件上传成功</p>
+        </div>
+            </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button id="commit" class="layui-btn" lay-submit lay-filter="form">开始转换</button>
+        <button id="result" class="layui-btn" style="display: none;">
+            <p><a id="resultConvertion" > 转换结果 </a></p>
+        </button>
+    </div>
+  </div>
+</form>
+  </div>
+    <div class="layui-col-md2">
+      <p> 测试数据</p>
+      <a href="/testdata/onet-18.pb" >onet-18.pb  </a><br/>
+      <a href="/testdata/tranformer916.onnx" >tranformer916.onnx </a><br/>
+      <a href="/testdata/bvlc_alexnet.caffemodel" >bvlc_alexnet.caffemodel</a><br/>
+      <a href="/testdata/alexnet.prototxt" >alexnet.prototxt</a><br/>
+    </div>
+    <div class="layui-col-md6">
+        <p> 转换中命令行输出</p>
+        <div id="cmd_result">
+        </div>
+    </div>
+</div>
+
+<script src="static/layui/layui.js"></script>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="static/js/app.js"></script>
+
+</body>
+</html>
