@@ -7,6 +7,7 @@ class EsModel(Document):
     log = Text()
     model_dir = Text()
     framework = Text()
+    model_class = Text()
 
     class Index:
         name = 'flask'

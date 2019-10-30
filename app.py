@@ -50,7 +50,9 @@ def create_model(request, session):
             model = model_pool[session[id]]
         else:
             model = CaffeModel(upload_base_dir, convert_base_dir, request)
+    print(model.id, 222222222)
     model_pool[model.id] = model
+    print(model_pool, 33333333333)
     # In the future, paddle2onnx may be supported
 
     return model
@@ -78,6 +80,7 @@ def upload():
         # initial database object
         es_model = EsModel(meta={'id': model.id}, ip=request.remote_addr)
         es_model.save()
+        print(es_model)
 
         producer = UploadProducer('Producer', uploading_queue, model_pool, app)
         if producer.add_task(model):
@@ -91,6 +94,7 @@ def upload():
 @app.route('/convert', methods=['POST'])
 def convert():
     model = get_model(session)
+    print(model.id, 9999999)
     producer = ConvertProducer('Producer', uploaded_queue, model_pool, app)
     if producer.add_task(model):
         producer.start()
@@ -126,6 +130,22 @@ if __name__ == '__main__':
     uploadConsumer = UploadConsumer('uploadConsumer', uploading_queue,
                                     model_pool, app)
     uploadConsumer.start()
+
+    uploadConsumer = UploadConsumer('uploadConsumer', uploading_queue,
+                                    model_pool, app)
+    uploadConsumer.start()
+
+    uploadConsumer = UploadConsumer('uploadConsumer', uploading_queue,
+                                    model_pool, app)
+    uploadConsumer.start()
+
+    convertConsumer = ConvertConsumer('convertConsumer', uploaded_queue,
+                                      model_pool, app)
+    convertConsumer.start()
+
+    convertConsumer = ConvertConsumer('convertConsumer', uploaded_queue,
+                                      model_pool, app)
+    convertConsumer.start()
 
     convertConsumer = ConvertConsumer('convertConsumer', uploaded_queue,
                                       model_pool, app)
