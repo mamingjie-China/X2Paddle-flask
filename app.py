@@ -1,3 +1,4 @@
+#coding=utf-8
 from flask import (Flask, request, render_template, send_from_directory,
                    jsonify, session)
 from werkzeug.utils import secure_filename
@@ -20,6 +21,7 @@ convert_base_dir = os.path.join(base_dir, 'save_model/')
 
 app = Flask(__name__)
 
+
 def create_app(app):
     app.debug = True
     app.config['SECRET_KEY'] = os.urandom(24)
@@ -32,15 +34,16 @@ def create_app(app):
     app.logger.addHandler(handler)
     return app
 
+
 def create_model(request, session):
-    suffix= request.files['file'].filename.split('.')[-1]
+    suffix = request.files['file'].filename.split('.')[-1]
 
     model = None
     if suffix == 'pb':
         model = TensorflowModel(upload_base_dir, convert_base_dir, request)
-    elif  suffix == 'onnx':
+    elif suffix == 'onnx':
         model = OnnxModel(upload_base_dir, convert_base_dir, request)
-    elif suffix in [ 'caffemodel', 'prototxt', 'proto', 'pt']:
+    elif suffix in ['caffemodel', 'prototxt', 'proto', 'pt']:
         if 'id' in session:
             # 注意由于caffe有两个文件需要上传，所以在create_model中加入了判断是否已经上传了一个文件
             # 不能重复新建Model对象，需要用session[id]从model_pool里面取，另外CaffeModel的save等方法也得重写
@@ -52,18 +55,21 @@ def create_model(request, session):
 
     return model
 
+
 def get_model(session):
     return model_pool[session['id']]
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.method == 'POST':
 
-        model = create_model(request,session)
+        model = create_model(request, session)
         session['id'] = model.id
 
         if not model.check_filetype():
@@ -81,6 +87,7 @@ def upload():
         else:
             return jsonify(name=model.id, status='failed', message='waiting')
 
+
 @app.route('/convert', methods=['POST'])
 def convert():
     model = get_model(session)
@@ -92,6 +99,7 @@ def convert():
 
     else:
         return jsonify(name=model.id, status='failed', message='waiting')
+
 
 @app.route('/download/<path:filename>', methods=['GET', 'POST'])
 def download(filename):
