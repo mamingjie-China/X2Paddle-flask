@@ -13,6 +13,8 @@ def run_script(cmd, model_name, save_base_dir):
               universal_newlines=True)
     cmd_result = ''
     for line in p.stdout.readlines():
+        if "Converting node" in line:
+            continue
         cmd_result += str(line).rstrip() + '<br/>\n'
         sys.stdout.flush()
 
@@ -21,11 +23,16 @@ def run_script(cmd, model_name, save_base_dir):
     if os.path.exists(os.path.join(save_dir, 'inference_model/__model__')):
         os.system('tar -C ' + save_base_dir + ' -cvzf ' + zip_dir + ' ' +
                   model_name)
-        res = {'name': model_name + '.tar.gz', 'status': 'success', 'cmd_result': cmd_result}
+        res = {
+            'name': model_name + '.tar.gz',
+            'status': 'success',
+            'cmd_result': cmd_result
+        }
         return res
     else:
         res = {'status': 'failed', 'cmd_result': cmd_result}
         return res
+
 
 class Model():
     def __init__(self, upload_base_dir, convert_base_dir, request):
@@ -49,6 +56,7 @@ class Model():
 
         return '.' in self.file['object'].filename and self.file[
             'object'].filename.split('.')[-1] in support_type
+
 
 class OnnxModel(Model):
     def __init__(self, upload_base_dir, convert_base_dir, request):
@@ -105,8 +113,8 @@ class TensorflowModel(Model):
         file.save(file_dir)
         self.file['upload_dir'] = file_dir
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
-        self.save_dir = os.path.join(save_base_dir + '/' + self.file['filename'])
-
+        self.save_dir = os.path.join(save_base_dir + '/' +
+                                     self.file['filename'])
 
     def convert(self):
         filename = self.file['filename']
@@ -166,6 +174,7 @@ class CaffeModel():
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
         save_dir = os.path.join(save_base_dir + '/' +
                                 self.files['caffe_model']['filename'])
+
     def convert(self):
         filename = self.files['caffe_model']['filename']
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
