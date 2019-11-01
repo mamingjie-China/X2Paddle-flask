@@ -3,9 +3,10 @@ import os
 from werkzeug.utils import secure_filename
 import sys
 from subprocess import Popen, PIPE, STDOUT
+from src.es_models import EsModel
 
 
-def run_script(cmd, model_name, save_base_dir):
+def run_script(cmd, model_name, save_base_dir, id):
     p = Popen(cmd,
               stdout=PIPE,
               stderr=STDOUT,
@@ -20,6 +21,13 @@ def run_script(cmd, model_name, save_base_dir):
 
     zip_dir = os.path.join(save_base_dir, model_name + '.tar.gz')
     save_dir = os.path.join(save_base_dir, model_name)
+    es_model = EsModel.get(id=id)
+    es_model.update(log=cmd_result)
+    es_model.update(save_dir=save_dir)
+    # print(es_model['email'],6661111)
+    # print(es_model["model_class"])
+    # print(es_model["upload_dir"])
+    # print(es_model['save_dir'])
     if os.path.exists(os.path.join(save_dir, 'inference_model/__model__')):
         os.system('tar -C ' + save_base_dir + ' -cvzf ' + zip_dir + ' ' +
                   model_name)
@@ -81,6 +89,8 @@ class OnnxModel(Model):
         self.file['upload_dir'] = file_dir
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
         save_dir = os.path.join(save_base_dir + '/' + self.file['filename'])
+        es_model = EsModel.get(id=self.id)
+        es_model.update(upload_dir=file_dir)
         self.save_dir = save_dir
 
     def convert(self):
@@ -88,7 +98,8 @@ class OnnxModel(Model):
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
         cmd = 'x2paddle' + ' --framework=onnx' + ' --model=' + self.file[
             'upload_dir'] + ' --save_dir=' + self.save_dir
-        return run_script(cmd, filename, save_base_dir)
+        id = self.id
+        return run_script(cmd, filename, save_base_dir, id)
 
 
 class TensorflowModel(Model):
@@ -112,6 +123,8 @@ class TensorflowModel(Model):
         file_dir = os.path.join(updir, filename)
         file.save(file_dir)
         self.file['upload_dir'] = file_dir
+        es_model = EsModel.get(id=self.id)
+        es_model.update(upload_dir=file_dir)
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
         self.save_dir = os.path.join(save_base_dir + '/' +
                                      self.file['filename'])
@@ -122,7 +135,8 @@ class TensorflowModel(Model):
 
         cmd = 'x2paddle' + ' --framework=tensorflow' + ' --model=' + self.file[
             'upload_dir'] + ' --save_dir=' + self.save_dir
-        return run_script(cmd, filename, save_base_dir)
+        id = self.id
+        return run_script(cmd, filename, save_base_dir, id)
 
 
 class CaffeModel():

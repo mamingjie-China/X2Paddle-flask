@@ -50,9 +50,7 @@ def create_model(request, session):
             model = model_pool[session[id]]
         else:
             model = CaffeModel(upload_base_dir, convert_base_dir, request)
-    print(model.id, 222222222)
     model_pool[model.id] = model
-    print(model_pool, 33333333333)
     # In the future, paddle2onnx may be supported
 
     return model
@@ -80,13 +78,13 @@ def upload():
         # initial database object
         es_model = EsModel(meta={'id': model.id}, ip=request.remote_addr)
         es_model.save()
-        print(es_model)
 
         producer = UploadProducer('Producer', uploading_queue, model_pool, app)
         if producer.add_task(model):
             producer.start()
             producer.join()
-            return jsonify(model.uploaded)
+            # return jsonify(model.uploaded)
+            return jsonify(name=model.id, status='success', message='uploaded')
         else:
             return jsonify(name=model.id, status='failed', message='waiting')
 
@@ -94,7 +92,11 @@ def upload():
 @app.route('/convert', methods=['POST'])
 def convert():
     model = get_model(session)
-    print(model.id, 9999999)
+    data = json.loads(request.get_data().decode('utf-8'))
+    es_model = EsModel.get(id=model.id)
+    es_model.update(email=data['email'])
+    es_model.update(framework=data['framework'])
+    es_model.update(model_class=data['model_class'])
     producer = ConvertProducer('Producer', uploaded_queue, model_pool, app)
     if producer.add_task(model):
         producer.start()
