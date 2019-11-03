@@ -97,12 +97,12 @@ def convert():
     es_model.update(email=data['email'])
     es_model.update(framework=data['framework'])
     es_model.update(model_class=data['model_class'])
+
     producer = ConvertProducer('Producer', uploaded_queue, model_pool, app)
     if producer.add_task(model):
         producer.start()
         producer.join()
         return jsonify(model.result)
-
     else:
         return jsonify(name=model.id, status='failed', message='waiting')
 

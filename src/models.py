@@ -21,13 +21,11 @@ def run_script(cmd, model_name, save_base_dir, id):
 
     zip_dir = os.path.join(save_base_dir, model_name + '.tar.gz')
     save_dir = os.path.join(save_base_dir, model_name)
+
     es_model = EsModel.get(id=id)
     es_model.update(log=cmd_result)
     es_model.update(save_dir=save_dir)
-    # print(es_model['email'],6661111)
-    # print(es_model["model_class"])
-    # print(es_model["upload_dir"])
-    # print(es_model['save_dir'])
+
     if os.path.exists(os.path.join(save_dir, 'inference_model/__model__')):
         os.system('tar -C ' + save_base_dir + ' -cvzf ' + zip_dir + ' ' +
                   model_name)
@@ -89,6 +87,7 @@ class OnnxModel(Model):
         self.file['upload_dir'] = file_dir
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
         save_dir = os.path.join(save_base_dir + '/' + self.file['filename'])
+
         es_model = EsModel.get(id=self.id)
         es_model.update(upload_dir=file_dir)
         self.save_dir = save_dir
@@ -123,8 +122,10 @@ class TensorflowModel(Model):
         file_dir = os.path.join(updir, filename)
         file.save(file_dir)
         self.file['upload_dir'] = file_dir
+
         es_model = EsModel.get(id=self.id)
         es_model.update(upload_dir=file_dir)
+
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
         self.save_dir = os.path.join(save_base_dir + '/' +
                                      self.file['filename'])
@@ -132,7 +133,6 @@ class TensorflowModel(Model):
     def convert(self):
         filename = self.file['filename']
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
-
         cmd = 'x2paddle' + ' --framework=tensorflow' + ' --model=' + self.file[
             'upload_dir'] + ' --save_dir=' + self.save_dir
         id = self.id
@@ -204,10 +204,8 @@ class CaffeModel():
         model_name = self.files['caffe_model']['object'].filename
 
         caffe_model_support_type = ['prototxt', 'proto', 'pt']
-
         valid_weight_name = '.' in weight_name and weight_name.split(
             '.')[-1] == 'caffemodel'
-
         valid_model_name = '.' in model_name and model_name.split(
             '.')[-1] in caffe_model_support_type
 
