@@ -122,6 +122,7 @@ class TensorflowModel(Model):
             os.mkdir(updir)
         file = self.file['object']
         filename = secure_filename(file.filename)
+        print(filename)
         file_dir = os.path.join(updir, filename)
         file.save(file_dir)
         self.file['upload_dir'] = file_dir
@@ -156,52 +157,90 @@ class CaffeModel():
                 'object': None,
                 'upload_dir': '',
                 'filename': '',
+                'suffix': '',
             },
             'caffe_model': {
                 'object': None,
                 'upload_dir': '',
                 'filename': '',
+                'suffix': '',
             }
         }
         self.resolve_files(request)
 
     def resolve_files(self, request):
-        if 'caffe_weight' in request.files:
-            self.files['caffe_weight']['object'] = request.files[
-                'caffe_weight']
-            self.files['caffe_weight']['filename'] = request.files[
-                'caffe_weight'].filename.split('.')[0]
-        if 'caffe_model' in request.files:
-            self.files['caffe_model']['object'] = request.files['caffe_model']
-            self.files['caffe_model']['filename'] = request.files[
-                'caffe_model'].filename.split('.')[0]
+        print(request.files['file'])
+        if 'file' in request.files:
+            if request.files['file'].filename.split('.')[-1] == 'prototxt':
+                self.files['caffe_model'] = request.files['file']
+                model_name = request.files['file'].filename
+                self.files['caffe_model'].filename = model_name
+                self.files['caffe_model'].suffix = model_name.split('.')[-1]
+
+            elif request.files['file'].filename.split('.')[-1] == 'caffemodel':
+                self.files['caffe_weight'] = request.files['file']
+                model_name = request.files['file'].filename
+                self.files['caffe_weight'].filename = model_name
+                self.files['caffe_weight'].suffix = model_name.split('.')[-1]
+        # if 'caffe_weight' in request.files:
+        #     self.files['caffe_weight']['object'] = request.files[
+        #         'caffe_weight']
+        #     print(self.files['caffe_weight']['object'])
+        #     self.files['caffe_weight']['filename'] = request.files[
+        #         'caffe_weight'].filename.split('.')[0]
+        #     print(self.files['caffe_weight']['filename'])
+        # if 'caffe_model' in request.files:
+        #     self.files['caffe_model']['object'] = request.files['caffe_model']
+        #     self.files['caffe_model']['filename'] = request.files[
+        #         'caffe_model'].filename.split('.')[0]
 
     def save(self):
         updir = os.path.join(self.upload_base_dir, self.id)
         if not os.path.exists(updir):
             os.mkdir(updir)
 
-        caffe_weight = self.files['caffe_weight']['object']
-        caffe_model = self.files['caffe_model']['object']
-        caffe_weight_filename = secure_filename(caffe_weight.filename)
-        caffe_model_filename = secure_filename(caffe_model.filename)
-        caffe_weight_dir = os.path.join(updir, caffe_weight_filename)
-        caffe_model_dir = os.path.join(updir, caffe_model_filename)
+        try:
+            caffe_weight = self.files['caffe_weight']
+            print(caffe_weight)
+            caffe_weight_filename = secure_filename(caffe_weight.filename)
+            caffe_weight_dir = os.path.join(updir, caffe_weight_filename)
+            caffe_weight.save(caffe_weight_dir)
+            self.files['caffe_weight']['upload_dir'] = caffe_weight_dir
+            save_base_dir = os.path.join(self.convert_base_dir, self.id)
+            save_dir = os.path.join(save_base_dir + '/' +
+                                    self.files['caffe_model']['filename'])
+            file_size = os.path.getsize(caffe_weight_dir)
 
-        caffe_weight.save(caffe_weight_dir)
-        self.files['caffe_weight']['upload_dir'] = caffe_weight_dir
-        caffe_model.save(caffe_model_dir)
-        self.files['caffe_model']['upload_dir'] = caffe_model_dir
-        save_base_dir = os.path.join(self.convert_base_dir, self.id)
-        save_dir = os.path.join(save_base_dir + '/' +
-                                self.files['caffe_model']['filename'])
-        file_size = os.path.getsize(caffe_weight_dir)
+            es_model = EsModel.get(id=self.id)
 
-        es_model = EsModel.get(id=self.id)
-        es_model.update(upload_dir=caffe_model_dir)
-        es_model.update(file_size=file_size)
+            self.save_dir = save_dir
 
-        self.save_dir = save_dir
+        except:
+            pass
+
+        # caffe_weight = self.files['caffe_weight']
+        # caffe_model = self.files['caffe_model']
+        # print(caffe_weight)
+        # print(caffe_model,1111111)
+        # caffe_weight_filename = secure_filename(caffe_weight.filename)
+        # caffe_model_filename = secure_filename(caffe_model.filename)
+        # caffe_weight_dir = os.path.join(updir, caffe_weight_filename)
+        # caffe_model_dir = os.path.join(updir, caffe_model_filename)
+        #
+        # caffe_weight.save(caffe_weight_dir)
+        # self.files['caffe_weight']['upload_dir'] = caffe_weight_dir
+        # caffe_model.save(caffe_model_dir)
+        # self.files['caffe_model']['upload_dir'] = caffe_model_dir
+        # save_base_dir = os.path.join(self.convert_base_dir, self.id)
+        # save_dir = os.path.join(save_base_dir + '/' +
+        #                         self.files['caffe_model']['filename'])
+        # file_size = os.path.getsize(caffe_weight_dir)
+        #
+        # es_model = EsModel.get(id=self.id)
+        # es_model.update(upload_dir=caffe_model_dir)
+        # es_model.update(file_size=file_size)
+        #
+        # self.save_dir = save_dir
 
     def convert(self):
         filename = self.files['caffe_model']['filename']
@@ -214,13 +253,15 @@ class CaffeModel():
         return run_script(cmd, filename, save_base_dir)
 
     def check_filetype(self):
-        weight_name = self.files['caffe_weight']['object'].filename
-        model_name = self.files['caffe_model']['object'].filename
-
-        caffe_model_support_type = ['prototxt', 'proto', 'pt']
-        valid_weight_name = '.' in weight_name and weight_name.split(
-            '.')[-1] == 'caffemodel'
-        valid_model_name = '.' in model_name and model_name.split(
-            '.')[-1] in caffe_model_support_type
-
-        return valid_weight_name and valid_model_name
+        return True
+        # weight_suffix = self.files['caffe_weight'].suffix
+        # print(weight_suffix,44441111)
+        # model_name = self.files['caffe_model'].filename
+        #
+        # caffe_model_support_type = ['prototxt', 'proto', 'pt']
+        # valid_weight_name = '.' in weight_name and weight_name.split(
+        #     '.')[-1] == 'caffemodel'
+        # valid_model_name = '.' in model_name and model_name.split(
+        #     '.')[-1] in caffe_model_support_type
+        #
+        # return valid_weight_name and valid_model_name

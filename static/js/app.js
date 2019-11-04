@@ -3,6 +3,7 @@ var onnx_name = '';
 var tf_name = '';
 var caffe_model_name = '';
 var caffe_weight_name = '';
+var model_id = '';
 
 layui.use('form', function(){
 
@@ -37,6 +38,7 @@ layui.use('form', function(){
     data.field['onnx_name'] = onnx_name;
     data.field['caffe_weight_name'] = caffe_weight_name;
     data.field['caffe_model_name'] = caffe_model_name;
+    data.field['model_id'] = model_id
       $.ajax({
             type: 'POST',
             url: '/convert',
@@ -48,7 +50,7 @@ layui.use('form', function(){
                 if(!is_ready){
                     return;
                 }
-                layui.$("#result").hide();
+//                layui.$("#result").hide();
                 layer.load();
           }
         }).success(function(data, textStatus, jqXHR){
@@ -102,7 +104,7 @@ layui.use('upload', function(){
   var upload = layui.upload;
   upload.render({
     elem: '#caffe_model'
-    ,url: '/test'
+    ,url: '/upload'
       ,accept: 'file'
     //,multiple: true
       ,before:function () {
@@ -144,6 +146,7 @@ layui.use('upload', function(){
     ,done: function(res){
         layui.$("#result_upload").show();
         onnx_name = res.name;
+        model_id = res.name;
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
@@ -160,6 +163,7 @@ layui.use('upload', function(){
     ,done: function(res){
         layui.$("#result_upload").show();
         tf_name = res.name;
+        model_id = res.name;
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
