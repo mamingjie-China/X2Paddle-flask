@@ -180,12 +180,14 @@ class CaffeModel():
         updir = os.path.join(self.upload_base_dir, self.id)
         if not os.path.exists(updir):
             os.mkdir(updir)
+
         caffe_weight = self.files['caffe_weight']['object']
         caffe_model = self.files['caffe_model']['object']
         caffe_weight_filename = secure_filename(caffe_weight.filename)
         caffe_model_filename = secure_filename(caffe_model.filename)
         caffe_weight_dir = os.path.join(updir, caffe_weight_filename)
         caffe_model_dir = os.path.join(updir, caffe_model_filename)
+
         caffe_weight.save(caffe_weight_dir)
         self.files['caffe_weight']['upload_dir'] = caffe_weight_dir
         caffe_model.save(caffe_model_dir)
@@ -193,6 +195,13 @@ class CaffeModel():
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
         save_dir = os.path.join(save_base_dir + '/' +
                                 self.files['caffe_model']['filename'])
+        file_size = os.path.getsize(caffe_weight_dir)
+
+        es_model = EsModel.get(id=self.id)
+        es_model.update(upload_dir=caffe_model_dir)
+        es_model.update(file_size=file_size)
+
+        self.save_dir = save_dir
 
     def convert(self):
         filename = self.files['caffe_model']['filename']
