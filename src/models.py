@@ -87,9 +87,12 @@ class OnnxModel(Model):
         self.file['upload_dir'] = file_dir
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
         save_dir = os.path.join(save_base_dir + '/' + self.file['filename'])
+        file_size = os.path.getsize(file_dir)
 
         es_model = EsModel.get(id=self.id)
         es_model.update(upload_dir=file_dir)
+        es_model.update(file_size=file_size)
+
         self.save_dir = save_dir
 
     def convert(self):
@@ -122,9 +125,11 @@ class TensorflowModel(Model):
         file_dir = os.path.join(updir, filename)
         file.save(file_dir)
         self.file['upload_dir'] = file_dir
+        file_size = os.path.getsize(file_dir)
 
         es_model = EsModel.get(id=self.id)
         es_model.update(upload_dir=file_dir)
+        es_model.update(file_size=file_size)
 
         save_base_dir = os.path.join(self.convert_base_dir, self.id)
         self.save_dir = os.path.join(save_base_dir + '/' +
