@@ -146,8 +146,11 @@ class TensorflowModel(Model):
 
 
 class CaffeModel():
-    def __init__(self, upload_base_dir, convert_base_dir, request):
-        self.id = uuid.uuid4().hex
+    def __init__(self, upload_base_dir, convert_base_dir, request, isOne):
+        if isOne == 'aaaaaaaaaa':
+            self.id = uuid.uuid4().hex
+        else:
+            self.id = isOne
         self.framework = ''
         self.headers = request.headers
         self.upload_base_dir = upload_base_dir

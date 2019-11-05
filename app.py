@@ -14,6 +14,7 @@ import queue
 uploading_queue = queue.Queue(maxsize=2)
 uploaded_queue = queue.Queue(maxsize=100)
 model_pool = dict()
+isHaveOne = 'aaaaaaaaaa'
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 upload_base_dir = os.path.join(base_dir, 'upload/')
@@ -46,7 +47,17 @@ def create_model(request, session):
     elif suffix in ['caffemodel', 'prototxt', 'proto', 'pt']:
         print(suffix, 44444)
         print(id)
-        model = CaffeModel(upload_base_dir, convert_base_dir, request)
+        global isHaveOne
+        if isHaveOne == 'aaaaaaaaaa':
+            print('aaaaaaaa')
+            model = CaffeModel(upload_base_dir, convert_base_dir, request,
+                               isHaveOne)
+        else:
+            print('bbbbbbbb')
+            model = CaffeModel(upload_base_dir, convert_base_dir, request,
+                               isHaveOne)
+        # model = CaffeModel(upload_base_dir, convert_base_dir, request)
+        isHaveOne = model.id
         print(model.id, 555551111)
     #     if 'id' in session:
     #         print(session[id])
@@ -73,12 +84,13 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload():
+    print('MMMMMMMMMMMM')
     if request.method == 'POST':
         uploaded_files = request.files.getlist("file")
         print(uploaded_files, 'FUCK!!!!!')
 
         model = create_model(request, session)
-        session['id'] = model.id
+        # session['id'] = model.id
 
         if not model.check_filetype():
             return jsonify(status='failed', message='filetype error')
@@ -92,6 +104,7 @@ def upload():
             producer.start()
             producer.join()
             # return jsonify(model.uploaded)
+            print("333311111")
             return jsonify(name=model.id, status='success', message='uploaded')
         else:
             return jsonify(name=model.id, status='failed', message='waiting')
