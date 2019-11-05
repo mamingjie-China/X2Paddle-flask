@@ -11,28 +11,28 @@ layui.use('form', function(){
   //监听提交
     form.on('submit(form)', function(data){
     var is_ready = true;
-    if(data.field.framework == 0 && tf_name == ''){
-        layer.msg('请上传.pb文件');
-        is_ready = false;
-    }
-    if(data.field.framework == 1 && onnx_name == ''){
-        layer.msg('请上传.onnx文件');
-        is_ready = false;
-    }
-    if(data.field.framework == 2 ){
-        if (caffe_model_name == '' && caffe_weight_name ==''){
-            layer.msg('请上传.prototxt和.caffemodel文件');
-            is_ready = false;
-        }
-        else if(caffe_model_name == ''){
-            layer.msg('请上传.prototxt文件');
-            is_ready = false;
-        }
-        else if(caffe_weight_name == ''){
-            layer.msg('请上传.caffemodel文件');
-            is_ready = false;
-        }
-    }
+    // if(data.field.framework == 0 && tf_name == ''){
+    //     layer.msg('请上传.pb文件');
+    //     is_ready = false;
+    // }
+    // if(data.field.framework == 1 && onnx_name == ''){
+    //     layer.msg('请上传.onnx文件');
+    //     is_ready = false;
+    // }
+    // if(data.field.framework == 2 ){
+    //     if (caffe_model_name == '' && caffe_weight_name ==''){
+    //         layer.msg('请上传.prototxt和.caffemodel文件');
+    //         is_ready = false;
+    //     }
+    //     else if(caffe_model_name == ''){
+    //         layer.msg('请上传.prototxt文件');
+    //         is_ready = false;
+    //     }
+    //     else if(caffe_weight_name == ''){
+    //         layer.msg('请上传.caffemodel文件');
+    //         is_ready = false;
+    //     }
+    // }
     console.log(is_ready)
     data.field['tf_name'] = tf_name;
     data.field['onnx_name'] = onnx_name;
@@ -83,82 +83,38 @@ layui.use('form', function(){
             layui.$("#onnx").hide();
       }
       if(data.value == 1){
-          layui.$("#onnx").show();
+          layui.$("#tensorflow").hide();
            layui.$("#caffe").hide();
-            layui.$("#tensorflow").hide();
+            layui.$("#onnx").show();
       }
       if(data.value == 2){
-          layui.$("#caffe").show();
-           layui.$("#tensorflow").hide();
-            layui.$("#onnx").hide();
+          layui.$("#tensorflow").hide();
+           layui.$("#caffe").show();
+             layui.$("#onnx").hide();
       }
       if(data.value == ''){
-          layui.$("#caffe").hide();
-           layui.$("#tensorflow").hide();
-            layui.$("#onnx").hide();
+          layui.$("#tensorflow").hide();
+           layui.$("#caffe").hide();
+             layui.$("#onnx").hide();
       }
 });
 });
 
 layui.use('upload', function(){
   var upload = layui.upload;
-  upload.render({
-    elem: '#caffe_model'
-    ,url: '/upload'
-      ,accept: 'file'
-    //,multiple: true
-      ,before:function () {
-          layui.$("#result_upload").hide();
-          layer.load();
-      }
-    ,done: function(res){
-        layui.$("#result_upload").show();
-        caffe_model_name = res.name;
-        layer.closeAll('loading');
-      console.log(res)
-    }
-  });
+
+  //选完文件后不自动上传
     upload.render({
-    elem: '#caffe_weight'
-    ,url: '/upload'
-      ,accept: 'file'
-    //,multiple: true
-      ,before:function () {
-          layui.$("#result_upload").hide();
-          layer.load();
-      }
-    ,done: function(res){
-        layui.$("#result_upload").show();
-      caffe_weight_name = res.name;
-      layer.closeAll('loading'); //关闭loading
-      console.log(res)
-    }
-  });
-    upload.render({
-    elem: '#onnx_file'
-    ,url: '/upload'
-      ,accept: 'file'
-    //,multiple: true
-      ,before:function () {
-          layui.$("#result_upload").hide();
-          layer.load();
-      }
-    ,done: function(res){
-        layui.$("#result_upload").show();
-        onnx_name = res.name;
-        model_id = res.name;
-        layer.closeAll('loading'); //关闭loading
-      console.log(res)
-    }
-  });
-      upload.render({
     elem: '#tf_file'
     ,url: '/upload'
-      ,accept: 'file'
+    ,exts: 'pb' //只允许上传pb文件
+    ,auto: false
+    ,accept: 'file'
     //,multiple: true
-        ,before:function () {
-          layui.$("#result_upload").hide();
-          layer.load();
+    ,bindAction: '#tensorflow_upload'
+    ,before:function () {
+        layui.$("#result_upload").hide();
+        layer.load();
       }
     ,done: function(res){
         layui.$("#result_upload").show();
@@ -168,5 +124,137 @@ layui.use('upload', function(){
       console.log(res)
     }
   });
+
+    upload.render({
+    elem: '#onnx_file'
+    ,url: '/upload'
+    ,exts: 'onnx' //只允许上传onnx文件
+    ,auto: false
+    ,accept: 'file'
+    //,multiple: true
+    ,bindAction: '#onnx_upload'
+    ,before:function () {
+        layui.$("#result_upload").hide();
+        layer.load();
+    }
+    ,done: function(res){
+        layui.$("#result_upload").show();
+        onnx_name = res.name;
+        model_id = res.name;
+        layer.closeAll('loading'); //关闭loading
+      console.log(res)
+    }
+  });
+
+    upload.render({
+    elem: '#caffe_model'
+    ,url: '/upload'
+    ,exts: 'pt|proto|prototxt' //只允许上传prototxt文件
+    ,auto: false
+    ,accept: 'file'
+  //,multiple: true
+    ,bindAction: '#caffe_upload'
+    ,before:function () {
+        layui.$("#result_upload").hide();
+        layer.load();
+    }
+    ,done: function(res){
+        layui.$("#result_upload").show();
+        caffe_model_name = res.name;
+        model_id = res.name;
+        layer.closeAll('loading'); //关闭loading
+      console.log(res)
+    }
+  });
+
+    upload.render({
+    elem: '#caffe_weight'
+    ,url: '/upload'
+    ,exts: 'caffemodel' //只允许上传caffemodel文件
+    ,auto: false
+    ,accept: 'file'
+    // ,multiple: true
+    ,bindAction: '#caffe_upload'
+    ,before:function () {
+        layui.$("#result_upload").hide();
+        layer.load();
+    }
+    ,done: function(res){
+        layui.$("#result_upload").show();
+        caffe_model_name = res.name;
+        model_id = res.name;
+        layer.closeAll('loading'); //关闭loading
+      console.log(res)
+    }
+  });
+
+  // upload.render({
+  //   elem: '#caffe_model'
+  //   ,url: '/upload'
+  //     ,accept: 'file'
+  //   //,multiple: true
+  //     ,before:function () {
+  //         layui.$("#result_upload").hide();
+  //         layer.load();
+  //     }
+  //   ,done: function(res){
+  //       layui.$("#result_upload").show();
+  //       caffe_model_name = res.name;
+  //       layer.closeAll('loading');
+  //     console.log(res)
+  //   }
+  // });
+  //   upload.render({
+  //   elem: '#caffe_weight'
+  //   ,url: '/upload'
+  //     ,accept: 'file'
+  //   //,multiple: true
+  //     ,before:function () {
+  //         layui.$("#result_upload").hide();
+  //         layer.load();
+  //     }
+  //   ,done: function(res){
+  //       layui.$("#result_upload").show();
+  //     caffe_weight_name = res.name;
+  //     layer.closeAll('loading'); //关闭loading
+  //     console.log(res)
+  //   }
+  // });
+  //   upload.render({
+  //   elem: '#onnx_file'
+  //   ,url: '/upload'
+  //     ,accept: 'file'
+  //   //,multiple: true
+  //     ,before:function () {
+  //         layui.$("#result_upload").hide();
+  //         layer.load();
+  //     }
+  //   ,done: function(res){
+  //       layui.$("#result_upload").show();
+  //       onnx_name = res.name;
+  //       model_id = res.name;
+  //       layer.closeAll('loading'); //关闭loading
+  //     console.log(res)
+  //   }
+  // });
+  //   upload.render({
+  //   elem: '#tf_file'
+  //   ,url: '/upload'
+  //     ,accept: 'file'
+  //   //,multiple: true
+  //     ,before:function () {
+  //         layui.$("#result_upload").hide();
+  //         layer.load();
+  //     }
+  //   ,done: function(res){
+  //       layui.$("#result_upload").show();
+  //       tf_name = res.name;
+  //       model_id = res.name;
+  //       layer.closeAll('loading'); //关闭loading
+  //     console.log(res)
+  //   }
+  // });
+
+
 })
 });

@@ -46,15 +46,17 @@ def create_model(request, session):
     elif suffix in ['caffemodel', 'prototxt', 'proto', 'pt']:
         print(suffix, 44444)
         print(id)
-        if 'id' in session:
-            print(session[id])
-            # 注意由于caffe有两个文件需要上传，所以在create_model中加入了判断是否已经上传了一个文件
-            # 不能重复新建Model对象，需要用session[id]从model_pool里面取，另外CaffeModel的save等方法也得重写
-            model = model_pool[session[id]]
-        else:
-            model = CaffeModel(upload_base_dir, convert_base_dir, request)
-            print(model.id, 5555551111)
-    model_pool[model.id] = model
+        model = CaffeModel(upload_base_dir, convert_base_dir, request)
+        print(model.id, 555551111)
+    #     if 'id' in session:
+    #         print(session[id])
+    #         # 注意由于caffe有两个文件需要上传，所以在create_model中加入了判断是否已经上传了一个文件
+    #         # 不能重复新建Model对象，需要用session[id]从model_pool里面取，另外CaffeModel的save等方法也得重写
+    #         model = model_pool[session[id]]
+    #     else:
+    #         model = CaffeModel(upload_base_dir, convert_base_dir, request)
+    #         print(model.id, 5555551111)
+    # model_pool[model.id] = model
     # In the future, paddle2onnx may be supported
 
     return model
@@ -72,6 +74,8 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.method == 'POST':
+        uploaded_files = request.files.getlist("file")
+        print(uploaded_files, 'FUCK!!!!!')
 
         model = create_model(request, session)
         session['id'] = model.id

@@ -158,12 +158,14 @@ class CaffeModel():
                 'upload_dir': '',
                 'filename': '',
                 'suffix': '',
+                'id': '',
             },
             'caffe_model': {
                 'object': None,
                 'upload_dir': '',
                 'filename': '',
                 'suffix': '',
+                'id': '',
             }
         }
         self.resolve_files(request)
@@ -200,23 +202,36 @@ class CaffeModel():
             os.mkdir(updir)
 
         try:
+            self.files['caffe_weight'].id = self.id
+            print(self.files['caffe_weight'].id, 'weight')
             caffe_weight = self.files['caffe_weight']
-            print(caffe_weight)
+            print(caffe_weight, 1111111)
             caffe_weight_filename = secure_filename(caffe_weight.filename)
             caffe_weight_dir = os.path.join(updir, caffe_weight_filename)
             caffe_weight.save(caffe_weight_dir)
-            self.files['caffe_weight']['upload_dir'] = caffe_weight_dir
+            self.files['caffe_weight'].upload_dir = caffe_weight_dir
             save_base_dir = os.path.join(self.convert_base_dir, self.id)
             save_dir = os.path.join(save_base_dir + '/' +
-                                    self.files['caffe_model']['filename'])
+                                    self.files['caffe_model'].filename)
             file_size = os.path.getsize(caffe_weight_dir)
 
             es_model = EsModel.get(id=self.id)
 
             self.save_dir = save_dir
-
         except:
-            pass
+            self.files['caffe_model'].id = self.id
+            print(self.files['caffe_model'].id, 'model')
+            caffe_model = self.files['caffe_model']
+            caffe_model_filename = secure_filename(caffe_model.filename)
+            caffe_model_dir = os.path.join(updir, caffe_model_filename)
+            caffe_model.save(caffe_model_dir)
+            self.files['caffe_model'].upload_dir = caffe_model_dir
+            save_base_dir = os.path.join(self.convert_base_dir, self.id)
+            save_dir = os.path.join(save_base_dir + '/' +
+                                    self.files['caffe_model'].filename)
+
+            self.save_dir = save_dir
+            # pass
 
         # caffe_weight = self.files['caffe_weight']
         # caffe_model = self.files['caffe_model']
