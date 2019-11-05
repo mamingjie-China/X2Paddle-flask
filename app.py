@@ -52,12 +52,14 @@ def create_model(request, session):
             print('aaaaaaaa')
             model = CaffeModel(upload_base_dir, convert_base_dir, request,
                                isHaveOne)
+            isHaveOne = model.id
         else:
             print('bbbbbbbb')
             model = CaffeModel(upload_base_dir, convert_base_dir, request,
                                isHaveOne)
+            isHaveOne = 'aaaaaaaaaa'
         # model = CaffeModel(upload_base_dir, convert_base_dir, request)
-        isHaveOne = model.id
+        # isHaveOne = model.id
         print(model.id, 555551111)
     #     if 'id' in session:
     #         print(session[id])
