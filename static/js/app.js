@@ -60,11 +60,17 @@ layui.use('form', function(){
           layui.$("#tensorflow").show();
            layui.$("#caffe").hide();
             layui.$("#onnx").hide();
+             layui.$("#caffe_weight").hide();
+              layui.$("#caffe_model").hide();
+
       }
       if(data.value == 1){
           layui.$("#tensorflow").hide();
            layui.$("#caffe").hide();
             layui.$("#onnx").show();
+             layui.$("#caffe_weight").hide();
+              layui.$("#caffe_model").hide();
+
       }
       if(data.value == 2){
           layui.$("#tensorflow").hide();
