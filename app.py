@@ -15,6 +15,7 @@ uploading_queue = queue.Queue(maxsize=2)
 uploaded_queue = queue.Queue(maxsize=100)
 model_pool = dict()
 isHaveOne = 'aaaaaaaaaa'
+model_id = ''
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 upload_base_dir = os.path.join(base_dir, 'upload/')
@@ -36,7 +37,7 @@ def create_app(app):
     return app
 
 
-def create_model(request, session):
+def create_model(request, session, isHaveOne):
     suffix = request.files['file'].filename.split('.')[-1]
 
     model = None
@@ -45,30 +46,14 @@ def create_model(request, session):
     elif suffix == 'onnx':
         model = OnnxModel(upload_base_dir, convert_base_dir, request)
     elif suffix in ['caffemodel', 'prototxt', 'proto', 'pt']:
-        print(suffix, 44444)
-        global isHaveOne
-        print(isHaveOne, 22224444)
         if isHaveOne == 'aaaaaaaaaa':
-            print('aaaaaaaa')
             model = CaffeModel(upload_base_dir, convert_base_dir, request,
                                isHaveOne)
-            isHaveOne = model.id
         else:
-            print('bbbbbbbb')
             model = CaffeModel(upload_base_dir, convert_base_dir, request,
                                isHaveOne)
             isHaveOne = 'aaaaaaaaaa'
-        # model = CaffeModel(upload_base_dir, convert_base_dir, request)
-        # isHaveOne = model.id
-        print(model.id, 555551111)
-    #     if 'id' in session:
-    #         print(session[id])
-    #         # 注意由于caffe有两个文件需要上传，所以在create_model中加入了判断是否已经上传了一个文件
-    #         # 不能重复新建Model对象，需要用session[id]从model_pool里面取，另外CaffeModel的save等方法也得重写
-    #         model = model_pool[session[id]]
-    #     else:
-    #         model = CaffeModel(upload_base_dir, convert_base_dir, request)
-    #         print(model.id, 5555551111)
+
     model_pool[model.id] = model
     # In the future, paddle2onnx may be supported
 
@@ -86,12 +71,14 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    print('MMMMMMMMMMMM')
     if request.method == 'POST':
         uploaded_files = request.files.getlist("file")
-        print(uploaded_files, 'FUCK!!!!!')
+        try:
+            isHaveOne = request.form['model_id']
+        except:
+            isHaveOne = 'aaaaaaaaaa'
 
-        model = create_model(request, session)
+        model = create_model(request, session, isHaveOne)
         # session['id'] = model.id
 
         if not model.check_filetype():
@@ -101,14 +88,11 @@ def upload():
         es_model = EsModel(meta={'id': model.id}, ip=request.remote_addr)
         es_model.save()
 
-        print(model_pool, 5555555444444)
-
         producer = UploadProducer('Producer', uploading_queue, model_pool, app)
         if producer.add_task(model):
             producer.start()
             producer.join()
             # return jsonify(model.uploaded)
-            print("333311111")
             return jsonify(name=model.id, status='success', message='uploaded')
         else:
             return jsonify(name=model.id, status='failed', message='waiting')
@@ -118,8 +102,9 @@ def upload():
 def convert():
     # model = get_model(session)
     data = json.loads(request.get_data().decode('utf-8'))
-    print(data, 33333333)
     model = get_model(data['model_id'])
+    global model_id
+    model_id = data['model_id']
     es_model = EsModel.get(id=model.id)
     es_model.update(email=data['email'])
     es_model.update(framework=data['framework'])
@@ -136,7 +121,8 @@ def convert():
 
 @app.route('/download/<path:filename>', methods=['GET', 'POST'])
 def download(filename):
-    id = session.get('id')
+    # id = session.get('id')
+    id = model_id
     download_dir = os.path.join(convert_base_dir, id)
     return send_from_directory(directory=download_dir, filename=filename)
 

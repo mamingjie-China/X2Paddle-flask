@@ -26,8 +26,6 @@ def run_script(cmd, model_name, save_base_dir, id):
     es_model.update(log=cmd_result)
     es_model.update(save_dir=save_dir)
 
-    print(save_dir, save_base_dir, zip_dir, model_name, "eeeeeeeee")
-
     if os.path.exists(os.path.join(save_dir, 'inference_model/__model__')):
         os.system('tar -C ' + save_base_dir + ' -cvzf ' + zip_dir + ' ' +
                   model_name)
@@ -187,24 +185,12 @@ class CaffeModel():
                 model_name = request.files['file'].filename
                 self.files['caffe_model'].filename = model_name
                 self.files['caffe_model'].suffix = model_name.split('.')[-1]
-                print(self.files['caffe_model'].filename, 'qqqqqqqqqqq')
 
             elif request.files['file'].filename.split('.')[-1] == 'caffemodel':
                 self.files['caffe_weight'] = request.files['file']
                 model_name = request.files['file'].filename
                 self.files['caffe_weight'].filename = model_name
                 self.files['caffe_weight'].suffix = model_name.split('.')[-1]
-        # if 'caffe_weight' in request.files:
-        #     self.files['caffe_weight']['object'] = request.files[
-        #         'caffe_weight']
-        #     print(self.files['caffe_weight']['object'])
-        #     self.files['caffe_weight']['filename'] = request.files[
-        #         'caffe_weight'].filename.split('.')[0]
-        #     print(self.files['caffe_weight']['filename'])
-        # if 'caffe_model' in request.files:
-        #     self.files['caffe_model']['object'] = request.files['caffe_model']
-        #     self.files['caffe_model']['filename'] = request.files[
-        #         'caffe_model'].filename.split('.')[0]
 
     def save(self):
         updir = os.path.join(self.upload_base_dir, self.id)
@@ -213,7 +199,6 @@ class CaffeModel():
 
         try:
             self.files['caffe_weight'].id = self.id
-            print(self.files['caffe_weight'].id, 'weight')
             caffe_weight = self.files['caffe_weight']
             caffe_weight_filename = secure_filename(caffe_weight.filename)
             caffe_weight_dir = os.path.join(updir, caffe_weight_filename)
@@ -231,7 +216,6 @@ class CaffeModel():
             self.save_dir = save_dir
         except:
             self.files['caffe_model'].id = self.id
-            print(self.files['caffe_model'].id, 'model')
             caffe_model = self.files['caffe_model']
             caffe_model_filename = secure_filename(caffe_model.filename)
             caffe_model_dir = os.path.join(updir, caffe_model_filename)
@@ -243,35 +227,8 @@ class CaffeModel():
 
             self.save_dir = save_dir
 
-        # caffe_weight = self.files['caffe_weight']
-        # caffe_model = self.files['caffe_model']
-        # print(caffe_weight)
-        # print(caffe_model,1111111)
-        # caffe_weight_filename = secure_filename(caffe_weight.filename)
-        # caffe_model_filename = secure_filename(caffe_model.filename)
-        # caffe_weight_dir = os.path.join(updir, caffe_weight_filename)
-        # caffe_model_dir = os.path.join(updir, caffe_model_filename)
-        #
-        # caffe_weight.save(caffe_weight_dir)
-        # self.files['caffe_weight']['upload_dir'] = caffe_weight_dir
-        # caffe_model.save(caffe_model_dir)
-        # self.files['caffe_model']['upload_dir'] = caffe_model_dir
-        # save_base_dir = os.path.join(self.convert_base_dir, self.id)
-        # save_dir = os.path.join(save_base_dir + '/' +
-        #                         self.files['caffe_model']['filename'])
-        # file_size = os.path.getsize(caffe_weight_dir)
-        #
-        # es_model = EsModel.get(id=self.id)
-        # es_model.update(upload_dir=caffe_model_dir)
-        # es_model.update(file_size=file_size)
-        #
-        # self.save_dir = save_dir
-
     def convert(self):
-        print(self.id, 'mmjmmjmmj')
-        print(self.upload_base_dir)
         model_path = os.path.join(self.upload_base_dir, self.id)
-        print(os.listdir(model_path))
         for filename in os.listdir(model_path):
             if filename.split('.')[-1] == 'caffemodel':
                 caffe_weight_filename = filename
@@ -290,15 +247,7 @@ class CaffeModel():
 
         # save_dir = os.path.join(self.save)
 
-        # print(model_path)
-        # filename = self.files['caffe_weight'].filename
-        # print(self.files['caffe_weight'].filename,'wqqwwqwq')
-        # save_base_dir = os.path.join(self.convert_base_dir, self.id)
-        # save_dir = self.files['caffe_model']['save_dir']
-        # weight_path = os.path.join(self.files['caffe_weight']['upload_dir'])
-        # model_path = os.path.join(self.files['caffe_model']['upload_dir'])
         cmd = 'x2paddle' + ' --framework=caffe' + ' --prototxt=' + caffe_model_path + ' --weight=' + caffe_weight_path + ' --save_dir=' + save_dir
-        print(str(cmd))
         return run_script(cmd, model_name, save_base_dir, id)
 
     def check_filetype(self):

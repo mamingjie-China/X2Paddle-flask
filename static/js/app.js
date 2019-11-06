@@ -11,28 +11,7 @@ layui.use('form', function(){
   //监听提交
     form.on('submit(form)', function(data){
     var is_ready = true;
-    // if(data.field.framework == 0 && tf_name == ''){
-    //     layer.msg('请上传.pb文件');
-    //     is_ready = false;
-    // }
-    // if(data.field.framework == 1 && onnx_name == ''){
-    //     layer.msg('请上传.onnx文件');
-    //     is_ready = false;
-    // }
-    // if(data.field.framework == 2 ){
-    //     if (caffe_model_name == '' && caffe_weight_name ==''){
-    //         layer.msg('请上传.prototxt和.caffemodel文件');
-    //         is_ready = false;
-    //     }
-    //     else if(caffe_model_name == ''){
-    //         layer.msg('请上传.prototxt文件');
-    //         is_ready = false;
-    //     }
-    //     else if(caffe_weight_name == ''){
-    //         layer.msg('请上传.caffemodel文件');
-    //         is_ready = false;
-    //     }
-    // }
+
     console.log(is_ready)
     data.field['tf_name'] = tf_name;
     data.field['onnx_name'] = onnx_name;
@@ -89,7 +68,8 @@ layui.use('form', function(){
       }
       if(data.value == 2){
           layui.$("#tensorflow").hide();
-           layui.$("#caffe").show();
+           layui.$("#caffe_model").show();
+           layui.$("#caffe_weight").hide();
              layui.$("#onnx").hide();
       }
       if(data.value == ''){
@@ -122,6 +102,7 @@ layui.use('upload', function(){
         layui.$("#result_upload").show();
         tf_name = res.name;
         model_id = res.name;
+        layui.$("#result").hide();
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
@@ -143,51 +124,26 @@ layui.use('upload', function(){
         layui.$("#result_upload").show();
         onnx_name = res.name;
         model_id = res.name;
+        layui.$("#result").hide();
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
   });
 
   //   var files = '';
-  //   upload.render({
-  //   elem: '#caffe_model'
-  //   ,url: '/upload'
-  //   ,exts: 'pt|proto|prototxt' //只允许上传prototxt文件
-  //   ,auto: false
-  //   ,accept: 'file'
-  //   // ,multiple: true
-  //   ,bindAction: '#caffe_upload'
-  //   ,choose: function(obj){
-  //   //将每次选择的文件追加到文件队列
-  //       files = obj.pushFile();
-  //     //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
-  //   }
-  //   ,before: function () {
-  //       layui.$("#result_upload").hide();
-  //       layer.load();
-  //   }
-  //   ,done: function(res){
-  //       layui.$("#result_upload").show();
-  //       caffe_model_name = res.name;
-  //       model_id = res.name;
-  //       layer.closeAll('loading'); //关闭loading
-  //     console.log(res)
-  //   }
-  // });
-  //   var files = '';
     upload.render({
-    elem: '#caffe_weight'
+    elem: '#caffe_model_upload'
     ,url: '/upload'
-    ,exts: 'prototxt|caffemodel' //只允许上传caffemodel文件
+    ,exts: 'pt|proto|prototxt' //只允许上传prototxt文件
     ,auto: false
     ,accept: 'file'
-    ,multiple: false
-    ,bindAction: '#caffe_upload'
-    ,choose: function(obj){
-    //将每次选择的文件追加到文件队列
-        var files = obj.pushFile();
-      //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
-    }
+    // ,multiple: true
+    ,bindAction: '#caffe_upload_model'
+    // ,choose: function(obj){
+    // //将每次选择的文件追加到文件队列
+    //     files = obj.pushFile();
+    //   //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
+    // }
     ,before: function () {
         layui.$("#result_upload").hide();
         layer.load();
@@ -196,6 +152,41 @@ layui.use('upload', function(){
         layui.$("#result_upload").show();
         caffe_model_name = res.name;
         model_id = res.name;
+        // layui.$("#caffe_model").hide();
+        // layui.$("#caffe_weight").show();
+        layer.closeAll('loading'); //关闭loading
+        layui.$("#caffe_model").hide();
+        layui.$("#result_upload").hide();
+        layui.$("#result").hide();
+        layui.$("#caffe_weight").show();
+      console.log(res)
+    }
+  });
+  //   var files = '';
+    upload.render({
+    elem: '#caffe_weight_upload'
+    ,url: '/upload'
+    ,data: {model_id: model_id}
+    ,exts: 'caffemodel' //只允许上传caffemodel文件
+    ,auto: false
+    ,accept: 'file'
+    ,multiple: false
+    ,bindAction: '#caffe_upload_weight'
+    // ,choose: function(obj){
+    // //将每次选择的文件追加到文件队列
+    //     var files = obj.pushFile();
+    //   //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
+    // }
+    ,before: function () {
+        layui.$("#result_upload").hide();
+        layer.load();
+        this.data={'model_id':model_id};
+    }
+    ,done: function(res){
+        layui.$("#result_upload").show();
+        caffe_model_name = res.name;
+        model_id = res.name;
+        layui.$("#result").hide();
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
