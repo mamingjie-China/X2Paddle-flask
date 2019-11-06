@@ -127,6 +127,12 @@ def download(filename):
     return send_from_directory(directory=download_dir, filename=filename)
 
 
+@app.route('/testdata/<path:filename>', methods=['GET', 'POST'])
+def testdata(filename):
+    updir = os.path.join(base_dir, 'upload/')
+    return send_from_directory(directory=updir, filename=filename)
+
+
 if __name__ == '__main__':
     #connect es
     config_dir = 'src/database/config.json'
