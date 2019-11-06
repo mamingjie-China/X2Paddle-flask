@@ -124,7 +124,6 @@ class TensorflowModel(Model):
             os.mkdir(updir)
         file = self.file['object']
         filename = secure_filename(file.filename)
-        print(filename)
         file_dir = os.path.join(updir, filename)
         file.save(file_dir)
         self.file['upload_dir'] = file_dir
@@ -226,6 +225,8 @@ class CaffeModel():
             file_size = os.path.getsize(caffe_weight_dir)
 
             es_model = EsModel.get(id=self.id)
+            es_model.update(upload_dir=caffe_weight_dir)
+            es_model.update(file_size=file_size)
 
             self.save_dir = save_dir
         except:
@@ -241,7 +242,6 @@ class CaffeModel():
                                     self.files['caffe_model'].filename)
 
             self.save_dir = save_dir
-            # pass
 
         # caffe_weight = self.files['caffe_weight']
         # caffe_model = self.files['caffe_model']
