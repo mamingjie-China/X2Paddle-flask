@@ -148,32 +148,32 @@ layui.use('upload', function(){
     }
   });
 
-    var files = '';
-    upload.render({
-    elem: '#caffe_model'
-    ,url: '/upload'
-    ,exts: 'pt|proto|prototxt' //只允许上传prototxt文件
-    ,auto: false
-    ,accept: 'file'
-    // ,multiple: true
-    // ,bindAction: '#caffe_upload'
-    ,choose: function(obj){
-    //将每次选择的文件追加到文件队列
-        files = obj.pushFile();
-      //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
-    }
-    ,before: function () {
-        layui.$("#result_upload").hide();
-        layer.load();
-    }
-    ,done: function(res){
-        layui.$("#result_upload").show();
-        caffe_model_name = res.name;
-        model_id = res.name;
-        layer.closeAll('loading'); //关闭loading
-      console.log(res)
-    }
-  });
+  //   var files = '';
+  //   upload.render({
+  //   elem: '#caffe_model'
+  //   ,url: '/upload'
+  //   ,exts: 'pt|proto|prototxt' //只允许上传prototxt文件
+  //   ,auto: false
+  //   ,accept: 'file'
+  //   // ,multiple: true
+  //   ,bindAction: '#caffe_upload'
+  //   ,choose: function(obj){
+  //   //将每次选择的文件追加到文件队列
+  //       files = obj.pushFile();
+  //     //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
+  //   }
+  //   ,before: function () {
+  //       layui.$("#result_upload").hide();
+  //       layer.load();
+  //   }
+  //   ,done: function(res){
+  //       layui.$("#result_upload").show();
+  //       caffe_model_name = res.name;
+  //       model_id = res.name;
+  //       layer.closeAll('loading'); //关闭loading
+  //     console.log(res)
+  //   }
+  // });
   //   var files = '';
     upload.render({
     elem: '#caffe_weight'
@@ -185,7 +185,7 @@ layui.use('upload', function(){
     ,bindAction: '#caffe_upload'
     ,choose: function(obj){
     //将每次选择的文件追加到文件队列
-        files = obj.pushFile();
+        var files = obj.pushFile();
       //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
     }
     ,before: function () {

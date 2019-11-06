@@ -46,8 +46,8 @@ def create_model(request, session):
         model = OnnxModel(upload_base_dir, convert_base_dir, request)
     elif suffix in ['caffemodel', 'prototxt', 'proto', 'pt']:
         print(suffix, 44444)
-        print(id)
         global isHaveOne
+        print(isHaveOne, 22224444)
         if isHaveOne == 'aaaaaaaaaa':
             print('aaaaaaaa')
             model = CaffeModel(upload_base_dir, convert_base_dir, request,
@@ -69,7 +69,7 @@ def create_model(request, session):
     #     else:
     #         model = CaffeModel(upload_base_dir, convert_base_dir, request)
     #         print(model.id, 5555551111)
-    # model_pool[model.id] = model
+    model_pool[model.id] = model
     # In the future, paddle2onnx may be supported
 
     return model
@@ -100,6 +100,8 @@ def upload():
         # initial database object
         es_model = EsModel(meta={'id': model.id}, ip=request.remote_addr)
         es_model.save()
+
+        print(model_pool, 5555555444444)
 
         producer = UploadProducer('Producer', uploading_queue, model_pool, app)
         if producer.add_task(model):
