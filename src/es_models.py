@@ -8,6 +8,7 @@ class EsModel(Document):
     model_dir = Text()
     framework = Text()
     model_class = Text()
+    time = Text()
 
     class Index:
         name = 'flask'

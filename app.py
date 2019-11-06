@@ -10,6 +10,7 @@ from src.database.connect import connect_es
 from src.models import TensorflowModel, CaffeModel, OnnxModel
 from src.tasks import ConvertConsumer, UploadConsumer, UploadProducer, ConvertProducer
 import queue
+import time
 
 uploading_queue = queue.Queue(maxsize=2)
 uploaded_queue = queue.Queue(maxsize=100)
@@ -109,6 +110,8 @@ def convert():
     es_model.update(email=data['email'])
     es_model.update(framework=data['framework'])
     es_model.update(model_class=data['model_class'])
+    localtime = time.localtime(time.time())
+    es_model.update(time=localtime)
 
     producer = ConvertProducer('Producer', uploaded_queue, model_pool, app)
     if producer.add_task(model):
