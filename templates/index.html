@@ -75,7 +75,6 @@
 		<div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="progressBar", id="progressBar", style="display: none;">
             <label class="layui-progress-label">上传进度</label>
 			<div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
-{#            <div style="margin-top: 15px; width:3000px;"></div>#}
 		</div>
 
         <div class="layui-form-item " id="result_upload" style="display: none;">
@@ -86,14 +85,16 @@
 
   <div class="layui-form-item">
     <div class="layui-input-block">
-      <button id="commit" class="layui-btn" lay-submit lay-filter="form">开始转换</button>
-        <button id="result" class="layui-btn" style="display: none;", type="button">
-            <p><a id="resultConvertion" > 转换结果 </a></p>
-        </button>
+      <button id="commit" class="layui-btn" lay-submit lay-filter="form", style="display: none;">开始转换</button>
+{#        <button id="result" class="layui-btn" style="display: none;", type="button">转换结果#}
+{#            <p><a id="resultConvertion" > 转换结果 </a></p>#}
+{#        </button>#}
+        <a id="result" class="layui-btn layui-btn-normal" style="display: none;">Paddle模型下载</a>
     </div>
   </div>
 </form>
   </div>
+
     <div class="layui-col-md2">
       <p> 测试数据</p>
       <a href="/testdata/onet-18.pb" >onet-18.pb  </a><br/>

@@ -36,9 +36,10 @@ layui.use('form', function(){
             var download_link =  "/download/"+ data['name'];
             if(is_ready && data['status']=='success'){
                 layer.msg(data['status']);
+                layui.$("#commit").hide();
                 layui.$("#result").show();
-                 $("#resultConvertion").attr("href", download_link);
-                  $("#resultConvertion").text(data['name']);
+                 $("#result").attr("href", download_link);
+                  // $("#result").text(data['name']);
                   $("#cmd_result").after(data['cmd_result'])
                  layer.closeAll('loading'); //关闭loading
             }else if(is_ready){
@@ -63,6 +64,8 @@ layui.use('form', function(){
             layui.$("#onnx").hide();
              layui.$("#caffe_weight").hide();
               layui.$("#caffe_model").hide();
+              layui.$("#commit").hide();
+              layui.$("#result").hide();
 
       }
       if(data.value == 1){
@@ -72,6 +75,8 @@ layui.use('form', function(){
             layui.$("#onnx").show();
              layui.$("#caffe_weight").hide();
               layui.$("#caffe_model").hide();
+              layui.$("#commit").hide();
+              layui.$("#result").hide();
 
       }
       if(data.value == 2){
@@ -80,11 +85,15 @@ layui.use('form', function(){
            layui.$("#caffe_model").show();
            layui.$("#caffe_weight").hide();
              layui.$("#onnx").hide();
+             layui.$("#commit").hide();
+              layui.$("#result").hide();
       }
       if(data.value == ''){
           layui.$("#tensorflow").hide();
            layui.$("#caffe").hide();
              layui.$("#onnx").hide();
+             layui.$("#commit").hide();
+              layui.$("#result").hide();
       }
 });
 });
@@ -113,6 +122,8 @@ layui.use(['upload', 'element'], function(){
     ,before: function () {
         layui.$("#progressBar").show();
         layui.$("#result_upload").hide();
+        layui.$("#commit").hide();
+        layui.$("#result").hide();
         // layui.$("#progressBar").show();
         layer.load();
       }
@@ -122,6 +133,7 @@ layui.use(['upload', 'element'], function(){
         model_id = res.name;
         layui.$("#result").hide();
         layui.$("#progressBar").hide();
+        layui.$("#commit").show();
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
@@ -143,6 +155,8 @@ layui.use(['upload', 'element'], function(){
     ,before: function () {
         layui.$("#progressBar").show();
         layui.$("#result_upload").hide();
+        layui.$("#commit").hide();
+        layui.$("#result").hide();
         layer.load();
     }
     ,done: function(res){
@@ -151,6 +165,7 @@ layui.use(['upload', 'element'], function(){
         model_id = res.name;
         layui.$("#result").hide();
         layui.$("#progressBar").hide();
+        layui.$("#commit").show();
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
@@ -178,6 +193,8 @@ layui.use(['upload', 'element'], function(){
     ,before: function () {
         layui.$("#progressBar").show();
         layui.$("#result_upload").hide();
+        layui.$("#commit").hide();
+        layui.$("#result").hide();
         layer.load();
     }
     ,done: function(res){
@@ -218,6 +235,8 @@ layui.use(['upload', 'element'], function(){
     ,before: function () {
         layui.$("#progressBar").show();
         layui.$("#result_upload").hide();
+        layui.$("#commit").hide();
+        layui.$("#result").hide();
         layer.load();
         this.data={'model_id':model_id};
     }
@@ -227,6 +246,7 @@ layui.use(['upload', 'element'], function(){
         model_id = res.name;
         layui.$("#result").hide();
         layui.$("#progressBar").hide();
+        layui.$("#commit").show();
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
