@@ -88,18 +88,25 @@ layui.use('form', function(){
 
 
 
-layui.use('upload', function(){
+layui.use(['upload', 'element'], function(){
   var upload = layui.upload;
+  element = layui.element;
+  // element.init();
 
   //选完文件后不自动上传
     upload.render({
     elem: '#tf_file'
     ,url: '/upload'
     ,exts: 'pb' //只允许上传pb文件
+    ,size: 5120000 //限制文件大小，单位为kb
     ,auto: false
     ,accept: 'file'
     //,multiple: true
     ,bindAction: '#tensorflow_upload'
+    ,progress: function (e, percent) {
+        console.log("进度：" + percent + '%');
+        element.progress('progressBar', percent  + '%');
+    }
     ,before: function () {
         layui.$("#result_upload").hide();
         layer.load();
@@ -118,10 +125,15 @@ layui.use('upload', function(){
     elem: '#onnx_file'
     ,url: '/upload'
     ,exts: 'onnx' //只允许上传onnx文件
+    ,size: 512000 //限制文件大小，单位为kb
     ,auto: false
     ,accept: 'file'
     //,multiple: true
     ,bindAction: '#onnx_upload'
+    ,progress: function (e, percent) {
+        console.log("进度：" + percent + '%');
+        element.progress('progressBar', percent  + '%');
+    }
     ,before: function () {
         layui.$("#result_upload").hide();
         layer.load();
@@ -141,10 +153,15 @@ layui.use('upload', function(){
     elem: '#caffe_model_upload'
     ,url: '/upload'
     ,exts: 'pt|proto|prototxt' //只允许上传prototxt文件
+    ,size: 51200 //限制文件大小，单位为kb
     ,auto: false
     ,accept: 'file'
     // ,multiple: true
     ,bindAction: '#caffe_upload_model'
+    ,progress: function (e, percent) {
+        console.log("进度：" + percent + '%');
+        element.progress('progressBar', percent  + '%');
+    }
     // ,choose: function(obj){
     // //将每次选择的文件追加到文件队列
     //     files = obj.pushFile();
@@ -174,10 +191,15 @@ layui.use('upload', function(){
     ,url: '/upload'
     ,data: {model_id: model_id}
     ,exts: 'caffemodel' //只允许上传caffemodel文件
+    ,size: 512000 //限制文件大小，单位为kb
     ,auto: false
     ,accept: 'file'
     ,multiple: false
     ,bindAction: '#caffe_upload_weight'
+    ,progress: function (e, percent) {
+        console.log("进度：" + percent + '%');
+        element.progress('progressBar', percent  + '%');
+    }
     // ,choose: function(obj){
     // //将每次选择的文件追加到文件队列
     //     var files = obj.pushFile();

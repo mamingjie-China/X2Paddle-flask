@@ -53,6 +53,7 @@
           <button type="button" class="layui-btn" id="tensorflow_upload">开始上传</button>
         </div>
 
+
         <div class="layui-form-item"  id="onnx" style="display: none;">
           <label class="layui-form-label">文件上传</label>
           <button type="button" class="layui-btn layui-btn-normal" id="onnx_file">选择.onnx文件</button>
@@ -71,6 +72,9 @@
           <button type="button" class="layui-btn" id="caffe_upload_weight">开始上传</button>
         </div>
 
+		<div class="layui-progress layui-progress-big" lay-showPercent="true" lay-filter="progressBar", id="progressBar">
+			<div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>
+		</div>
 
         <div class="layui-form-item " id="result_upload" style="display: none;">
         <div class="layui-input-block">
@@ -100,6 +104,8 @@
         </div>
     </div>
 </div>
+
+
 
 <script src="static/layui/layui.js"></script>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
