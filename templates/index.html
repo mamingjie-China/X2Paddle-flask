@@ -72,8 +72,10 @@
           <button type="button" class="layui-btn" id="caffe_upload_weight">开始上传</button>
         </div>
 
-		<div class="layui-progress layui-progress-big" lay-showPercent="true" lay-filter="progressBar", id="progressBar">
-			<div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>
+		<div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="progressBar", id="progressBar", style="display: none;">
+            <label class="layui-progress-label">上传进度</label>
+			<div class="layui-progress-bar layui-bg-blue" lay-percent="0%"></div>
+{#            <div style="margin-top: 15px; width:3000px;"></div>#}
 		</div>
 
         <div class="layui-form-item " id="result_upload" style="display: none;">
@@ -81,10 +83,11 @@
          <p >文件上传成功</p>
         </div>
             </div>
+
   <div class="layui-form-item">
     <div class="layui-input-block">
       <button id="commit" class="layui-btn" lay-submit lay-filter="form">开始转换</button>
-        <button id="result" class="layui-btn" style="display: none;">
+        <button id="result" class="layui-btn" style="display: none;", type="button">
             <p><a id="resultConvertion" > 转换结果 </a></p>
         </button>
     </div>

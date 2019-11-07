@@ -58,6 +58,7 @@ layui.use('form', function(){
   console.log(data.value); //得到被选中的值
       if(data.value == 0){
           layui.$("#tensorflow").show();
+          layui.$("#result_upload").hide();
            layui.$("#caffe").hide();
             layui.$("#onnx").hide();
              layui.$("#caffe_weight").hide();
@@ -66,6 +67,7 @@ layui.use('form', function(){
       }
       if(data.value == 1){
           layui.$("#tensorflow").hide();
+          layui.$("#result_upload").hide();
            layui.$("#caffe").hide();
             layui.$("#onnx").show();
              layui.$("#caffe_weight").hide();
@@ -74,6 +76,7 @@ layui.use('form', function(){
       }
       if(data.value == 2){
           layui.$("#tensorflow").hide();
+          layui.$("#result_upload").hide();
            layui.$("#caffe_model").show();
            layui.$("#caffe_weight").hide();
              layui.$("#onnx").hide();
@@ -108,7 +111,9 @@ layui.use(['upload', 'element'], function(){
         element.progress('progressBar', percent  + '%');
     }
     ,before: function () {
+        layui.$("#progressBar").show();
         layui.$("#result_upload").hide();
+        // layui.$("#progressBar").show();
         layer.load();
       }
     ,done: function(res){
@@ -116,6 +121,7 @@ layui.use(['upload', 'element'], function(){
         tf_name = res.name;
         model_id = res.name;
         layui.$("#result").hide();
+        layui.$("#progressBar").hide();
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
@@ -135,6 +141,7 @@ layui.use(['upload', 'element'], function(){
         element.progress('progressBar', percent  + '%');
     }
     ,before: function () {
+        layui.$("#progressBar").show();
         layui.$("#result_upload").hide();
         layer.load();
     }
@@ -143,6 +150,7 @@ layui.use(['upload', 'element'], function(){
         onnx_name = res.name;
         model_id = res.name;
         layui.$("#result").hide();
+        layui.$("#progressBar").hide();
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
@@ -168,6 +176,7 @@ layui.use(['upload', 'element'], function(){
     //   //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
     // }
     ,before: function () {
+        layui.$("#progressBar").show();
         layui.$("#result_upload").hide();
         layer.load();
     }
@@ -181,6 +190,7 @@ layui.use(['upload', 'element'], function(){
         layui.$("#caffe_model").hide();
         layui.$("#result_upload").hide();
         layui.$("#result").hide();
+        layui.$("#progressBar").hide();
         layui.$("#caffe_weight").show();
       console.log(res)
     }
@@ -206,6 +216,7 @@ layui.use(['upload', 'element'], function(){
     //   //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
     // }
     ,before: function () {
+        layui.$("#progressBar").show();
         layui.$("#result_upload").hide();
         layer.load();
         this.data={'model_id':model_id};
@@ -215,6 +226,7 @@ layui.use(['upload', 'element'], function(){
         caffe_model_name = res.name;
         model_id = res.name;
         layui.$("#result").hide();
+        layui.$("#progressBar").hide();
         layer.closeAll('loading'); //关闭loading
       console.log(res)
     }
