@@ -1,4 +1,4 @@
-## a server of x2padde(based on flask)
+## A web service for X2Paddle
 
 ### 依赖
 - python包查看requirements.txt
